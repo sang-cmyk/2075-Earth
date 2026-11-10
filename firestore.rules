@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+
+    function isTeacher() {
+      return signedIn()
+        && request.auth.token.email != null
+        && request.auth.token.email_verified == true
+        && (
+          exists(/databases/$(database)/documents/config/teachers)
+            ? ('emails' in get(/databases/$(database)/documents/config/teachers).data &&
+               request.auth.token.email.lower() in get(/databases/$(database)/documents/config/teachers).data.emails)
+            : (request.auth.token.email.lower() in ['sangwoo59590@gmail.com', '202105@jeonnong.ms.kr'])
+        );
+    }
+
+    match /config/{docId} {
+      allow read: if true;
+      allow write: if isTeacher();
+    }
+
+    match /rooms/{roomId} {
+      allow read: if true;
+      allow create, update, delete: if isTeacher();
+
+      match /teams/{teamId} {
+        allow read: if true;
+        allow create, delete: if isTeacher();
+        // 학생(로그인 불필요) 및 교사 모두 좌석 선택/해제 업데이트 가능
+        allow update: if true;
+
+        match /inputs/{seatId} {
+          allow read: if true;
+          // 학생 개인별 라운드 투표/선택 제출
+          allow create, update: if true;
+          allow delete: if isTeacher();
+        }
+      }
+
+      match /logs/{logId} {
+        allow read: if isTeacher();
+        allow create: if true;
+      }
+
+      match /{sub}/{docId} {  // backups 등 기타 교사용 데이터
+        allow read, write: if isTeacher();
+      }
+    }
+  }
+}

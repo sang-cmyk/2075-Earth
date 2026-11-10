@@ -1,0 +1,75 @@
+{
+  "entities": {
+    "Room": {
+      "title": "Room",
+      "description": "2075 지구 교실 게임 방",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string", "maxLength": 8 },
+        "grade": { "type": "number" },
+        "classNumber": { "type": "number" },
+        "title": { "type": "string", "maxLength": 100 },
+        "isTest": { "type": "boolean" },
+        "phase": { "type": "string", "maxLength": 30 },
+        "round": { "type": "number" },
+        "timerExpiresAt": { "type": "number" },
+        "timerPaused": { "type": "boolean" },
+        "seed": { "type": "number" },
+        "gameStateJson": { "type": "string", "maxLength": 100000 },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["code", "phase", "round"]
+    },
+    "Team": {
+      "title": "Team",
+      "description": "방 내 6개 나라(모둠) 현황 및 좌석",
+      "type": "object",
+      "properties": {
+        "teamId": { "type": "number" },
+        "seats": { "type": "object" },
+        "revoteItem": { "type": "string" }
+      },
+      "required": ["teamId"]
+    },
+    "Input": {
+      "title": "Input",
+      "description": "학생 좌석별 투표 입력",
+      "type": "object",
+      "properties": {
+        "seat": { "type": "number" },
+        "uid": { "type": "string", "maxLength": 128 },
+        "round": { "type": "number" },
+        "submitted": { "type": "boolean" }
+      },
+      "required": ["seat", "uid", "round", "submitted"]
+    },
+    "TeacherConfig": {
+      "title": "TeacherConfig",
+      "description": "교사 권한 이메일 허용 목록",
+      "type": "object",
+      "properties": {
+        "emails": { "type": "array" }
+      }
+    }
+  },
+  "firestore": {
+    "/config/{docId}": {
+      "schema": "TeacherConfig",
+      "description": "교사 허용 목록 및 시스템 설정"
+    },
+    "/rooms/{roomId}": {
+      "schema": "Room",
+      "description": "게임 방 정보 및 전체 게임 상태"
+    },
+    "/rooms/{roomId}/teams/{teamId}": {
+      "schema": "Team",
+      "description": "모둠별 좌석 및 결정 데이터"
+    },
+    "/rooms/{roomId}/teams/{teamId}/inputs/{seatId}": {
+      "schema": "Input",
+      "description": "학생 개인 투표 입력표"
+    }
+  }
+}

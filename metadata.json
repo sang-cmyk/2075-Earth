@@ -1,0 +1,6 @@
+{
+  "name": "2075 지구 (Earth 2075)",
+  "description": "중학교 도덕 수업용 6개국 협력·생명공학·AI·적정기술 시뮬레이션 및 미래 세대 법정 실시간 교실 게임",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
